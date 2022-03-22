@@ -1,6 +1,8 @@
 import os
 import shutil
 import pathlib
+import unittest
+
 import chardet
 
 
@@ -54,11 +56,19 @@ def replace_content(file, src_str, dest_str):
     content = ""
     with open(file=file, mode='r+', encoding=encoding(file)) as fp:
         for line in fp.readlines():
-            line.replace(src_str, dest_str)
+            line = line.replace(src_str, dest_str)
             content += line
+        fp.seek(0)
         fp.truncate(0)
         fp.write(content)
 
 
-if __name__ == '__main__':
-    pass
+class TestFileFunctions(unittest.TestCase):
+    def test_replace_content(self):
+        replace_content('./test.c', '#include', '@INCLUDE')
+
+    def test_iter_dir(self):
+        iter_dir(r'D:\Workspace\C\gcc', print)
+
+    def test_compressed_format(self):
+        print(shutil.get_archive_formats())
