@@ -13,19 +13,20 @@ def check_valid_ipaddr(ipaddr):
 
 
 class SSH:
+    # 登陆服务端
     def login(self, host, username, password, port):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy)
         ssh.connect(hostname=host, username=username, password=password, port=port)
         self.ssh = ssh
-
+    # 执行远程命令
     def exec(self, cmd):
         stdin, stdout, stderr = self.ssh.exec_command(cmd)
         for echo in stdout.readlines():
             print(echo)
         for echo in stderr.readlines():
             print(echo)
-
+    # 复制远程文件到本地
     def scp(self, remote, local):
         scp = SCPClient(self.ssh.get_transport(), socket_timeout=15.0)
         scp.get(remote, local)
