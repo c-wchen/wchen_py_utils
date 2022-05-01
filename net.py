@@ -15,6 +15,26 @@ def check_valid_ipaddr(ipaddr):
         return False
 
 
+class WExpect:
+    def __init__(self, spawn, timeout=10):
+        self.cmd_list = []
+        self.cmd_list.append('expect <<EOF')
+        self.cmd_list.append('set timeout %d' % timeout)
+        self.cmd_list.append('spawn %s' % spawn)
+
+    def expect(self, pattern, send_val, end='\\n'):
+        # TODO: replace替换字符串存在问题?
+        expect_expr = r'''
+            expect "{pattern}"
+            send "{send}"
+        '''.replace(' ' * 12, '').format(pattern=pattern, send=send_val + end).strip()
+        self.cmd_list.append(expect_expr)
+
+    def get_output(self):
+        output = [*self.cmd_list, 'expect eof', 'EOF']
+        return '\n'.join(output)
+
+
 class SSH:
     def __init__(self):
         self.ssh = None
@@ -59,24 +79,43 @@ class SSH:
 class TestNetFunctions(unittest.TestCase):
     def setUp(self):
         self.user = ('192.168.2.45', 'wchen', '12345', 22)
+        ssh = SSH()
+        ssh.login(*self.user)
+        self.ssh = ssh
 
     def test_check_valid_ipaddr(self):
         self.assertEqual(True, check_valid_ipaddr('192.168.2.43'))
         self.assertEqual(False, check_valid_ipaddr('192.168.2.266'))
 
     def test_ssh_connect(self):
-        ssh = SSH()
-        ssh.login(*self.user)
-        ssh.exec('ls -al workspace')
-        ssh.scp('workspace/test.c', './test.c')
+        self.ssh.exec('ls -al workspace')
+        self.ssh.scp('workspace/test.c', './test.c')
 
     def test_ssh_cmd(self):
-        ssh = SSH()
-        ssh.login(*self.user)
-        ssh.exec('ls -al', 'who')
+        self.ssh.exec('ls -al', 'who')
 
     def test_active_terminal(self):
-        ssh = SSH()
-        ssh.login(*self.user)
-        ssh.active_terminal()
-        ssh.exec('~/workspace/cmd', 'hello world', 'q')
+        self.ssh.active_terminal()
+        self.ssh.exec('~/workspace/cmd', 'hello world', 'q')
+
+    def test_multi_cmd(self):
+        expect_cmd = r'''
+            expect << EOF
+            set timeout 10
+            spawn ~/workspace/cmd
+            expect "diagnose*"
+            send "hello world\n"
+            expect "diagnose*"
+            send "q\n"
+            expect eof
+            EOF
+        '''.replace(' ' * 12, '').strip()
+        print(expect_cmd)
+        self.ssh.exec(expect_cmd)
+
+    def test_expect_cmd(self):
+        cmd = WExpect('~/workspace/cmd')
+        cmd.expect('diagnose*', 'hello world')
+        cmd.expect('diagnose*', 'q')
+        print(cmd.get_output())
+        self.ssh.exec(cmd.get_output())
