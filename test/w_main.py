@@ -3,6 +3,7 @@ import unittest
 import sys
 sys.path.append('..')
 
+# TODO: 通过命令行运行测试套下的用例
 if __name__ == '__main__':
     suites = unittest.TestSuite()
     # from test_expect import TestExpectFunctions

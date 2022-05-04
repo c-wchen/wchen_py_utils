@@ -4,8 +4,11 @@ import unittest
 
 '''
 命令行运行unitest
+python -m unittest -h
+
 import sys
 sys.path.append('..')
+
 cmd: python -m unittest test_expect
 '''
 
