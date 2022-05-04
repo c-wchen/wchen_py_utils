@@ -44,6 +44,7 @@ class TestExpectFunctions(unittest.TestCase):
         self.ssh.exec(cmd.get_output())
 
     def test_pexpect_cmd(self):
+        print("==test==")
         """
         : ssh.prompt(): 等待命令返回
         from pexpect import pxssh
