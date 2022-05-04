@@ -33,7 +33,16 @@ class TestExpectFunctions(unittest.TestCase):
         self.ssh.exec(cmd.get_output())
 
     def test_pexpect_cmd(self):
-        print("test")
+        """
+        : ssh.prompt(): 等待命令返回
+        from pexpect import pxssh
+        ssh = pxssh.pxssh()
+        ssh.login(server='192.168.2.45', username='wchen', password='12345')
+        ssh.expect('diagnose> ')
+        ssh.sendline('hello world')
+        ssh.expect('diagnose> ')
+        ssh.sendline('q')
+        print(ssh.before)
+        ssh.logout()
+        """
         pass
-        # ssh = pxssh()
-        # ssh.login(server='192.168.2.45', username='wchen', password='12345')

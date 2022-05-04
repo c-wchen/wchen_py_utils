@@ -1,6 +1,11 @@
 import os
 import click
-
+'''
+functions: 实现简单的递归目录查询ELF文件定义的符号
+代替方案： 
+nm -A * | grep symbol
+nm -A $(sudo find . -name "*.[so|a|o]") | grep symbol
+'''
 ELF_FORMAT = ['.so', '.a', '.o']
 
 
