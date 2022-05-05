@@ -51,6 +51,7 @@ def replace_content(file, src_str, dest_str):
         # 二进制方式读取，获取字节数据，检测类型
         with open(path, 'rb') as f:
             return chardet.detect(f.read())['encoding']
+
     content = ""
     with open(file=file, mode='r+', encoding=encoding(file)) as fp:
         for line in fp.readlines():

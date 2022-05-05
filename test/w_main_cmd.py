@@ -9,6 +9,13 @@ sys.path.append('..')
 
 
 def run_filters(suit, case):
+    """
+    约束：
+    用例模块文件名以"test_"开始
+    用例函数名以"test_"开始
+    """
+    if case.startswith('test_'):
+        return
     suites = unittest.TestSuite()
     is_find = True
     for module in glob.glob('test*.py'):
@@ -36,13 +43,13 @@ def show_all():
     for module in glob.glob('test*.py'):
         module_name = pathlib.Path(module).stem
         classes = inspect.getmembers(__import__(module_name), inspect.isclass)
-        for name, cls in classes:
+        for cls_name, cls in classes:
             if issubclass(cls, unittest.TestCase):
-                print('%s:' % name)
+                print('%s:' % cls_name)
                 functions = inspect.getmembers(cls, inspect.isfunction)
-                for name, func in functions:
-                    if name.startswith('test_'):
-                        print('    %s' % name)
+                for func_name, func in functions:
+                    if func_name.startswith('test_'):
+                        print('    %s' % func_name)
 
 
 def show_help():
