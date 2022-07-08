@@ -44,14 +44,15 @@ def extract(path):
             shutil.unpack_archive(path, extract_dir)
 
 
+# 获取文件编码
+def encoding(path):
+    # 二进制方式读取，获取字节数据，检测类型
+    with open(path, 'rb') as f:
+        return chardet.detect(f.read())['encoding']
+
+
 # 替换文件中内容
 def replace_content(file, src_str, dest_str):
-    # 获取文件编码类型
-    def encoding(path):
-        # 二进制方式读取，获取字节数据，检测类型
-        with open(path, 'rb') as f:
-            return chardet.detect(f.read())['encoding']
-
     content = ""
     with open(file=file, mode='r+', encoding=encoding(file)) as fp:
         for line in fp.readlines():
